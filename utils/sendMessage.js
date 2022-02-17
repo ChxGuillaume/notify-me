@@ -1,5 +1,5 @@
 module.exports = function sendMessage(channel, roleId, item, addedFields = []) {
-    const {title, url, image, price, options} = item;
+    const {title, url, image, price, options, buttonText} = item;
 
     channel
         .send({
@@ -8,23 +8,23 @@ module.exports = function sendMessage(channel, roleId, item, addedFields = []) {
                 title: title,
                 url: url,
                 thumbnail: {url: image},
-                fields: [{
+                fields: price && options ? [{
                     name: 'Price',
                     value: `${price}`,
                 }, {
                     name: 'Details',
                     value: options.join('\n\n')
-                }, ...addedFields]
+                }, ...addedFields] : undefined
             }],
-            components: [{
+            components: url ? [{
                 type: 1,
                 components: [{
                     style: 5,
-                    label: `Buy Now`,
+                    label: buttonText || `Buy Now`,
                     url: url,
                     disabled: false,
                     type: 2
                 }]
-            }],
+            }] : undefined,
         })
 };

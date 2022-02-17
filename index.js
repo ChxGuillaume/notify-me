@@ -6,6 +6,7 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const DiscordSnowgiving = require('./notifiers/discord-snowgiving');
 const ShopAnthonyWang = require('./notifiers/shopanthonywang');
 const Keychron = require('./notifiers/keychron');
+const ZUnivers = require('./notifiers/zunivers');
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`.yellow);
@@ -13,6 +14,7 @@ client.on('ready', () => {
     //new DiscordSnowgiving(client);
     new ShopAnthonyWang(client);
     new Keychron(client);
+    new ZUnivers(client);
 });
 
 client.login(process.env.DISCORD_TOKEN).then();
