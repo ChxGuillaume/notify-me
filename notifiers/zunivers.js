@@ -26,8 +26,6 @@ module.exports = class ZUnivers {
             .then(async ({data}) => {
                 const {lootStreak} = data;
 
-                console.log(data);
-
                 if (!lootStreak[lootStreak.length - 1].loots) {
                     sendMessage(
                         this.channel(),
