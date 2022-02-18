@@ -1,5 +1,5 @@
 module.exports = function sendMessage(channel, roleId, item, addedFields = []) {
-    const {title, url, image, price, options, buttonText} = item;
+    const {title, description, url, image, price, options, buttonText} = item;
 
     channel
         .send({
@@ -7,6 +7,7 @@ module.exports = function sendMessage(channel, roleId, item, addedFields = []) {
             embeds: [{
                 title: title,
                 url: url,
+                description: description,
                 thumbnail: {url: image},
                 fields: price && options ? [{
                     name: 'Price',

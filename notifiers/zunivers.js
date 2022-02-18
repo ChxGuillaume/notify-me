@@ -4,14 +4,16 @@ const logger = require('../utils/logger');
 const sendMessage = require('../utils/sendMessage');
 
 module.exports = class ZUnivers {
-
     constructor(client) {
         this.client = client;
 
         cron.schedule('* 12 * * *', () => {
-            this.fetch('https://zunivers-api.zerator.com/public/user/NiNoN%239999');
+            this.fetchVortexStatus();
+            this.fetchLootsStreak();
         }, {});
-        this.fetch('https://zunivers-api.zerator.com/public/user/NiNoN%239999');
+
+        this.fetchVortexStatus();
+        this.fetchLootsStreak();
     }
 
     channel() {
@@ -20,9 +22,9 @@ module.exports = class ZUnivers {
             .channels.cache.find(channel => channel.id === '943448048753840159')
     }
 
-    fetch(url) {
+    fetchLootsStreak() {
         axios
-            .get(url)
+            .get('https://zunivers-api.zerator.com/public/user/NiNoN%239999')
             .then(async ({data}) => {
                 const {lootStreak} = data;
 
@@ -38,12 +40,42 @@ module.exports = class ZUnivers {
                         }
                     );
 
-                    setTimeout(() => {
-                        this.fetch(url);
+                    setTimeout(() =>{
+                        this.fetchLootsStreak();
                     }, 1000 * 60 * 15);
                 }
 
-                logger('ZUnivers Checked!');
+                logger('ZUnivers Loot Streak Checked!');
+            });
+    }
+
+    fetchVortexStatus() {
+        axios
+            .get('https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity')
+            .then(async ({data}) => {
+                const {towerStats: { 0: { towerName, maxFloorIndex, towerLogCount } }} = data;
+
+                if (this.actualVortexTries === towerLogCount) {
+                    sendMessage(
+                        this.channel(),
+                        '943447932160606228',
+                        {
+                            title: 'ZUnivers Vortex Tries',
+                            description: `${towerName} - floor ${maxFloorIndex + 1}/6`,
+                            url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
+                            image: 'https://zunivers.zerator.com/img/logo.ac4a9e45.png',
+                            buttonText: 'Vortex Channel',
+                        }
+                    );
+
+                    setTimeout(() =>{
+                        this.fetchLootsStreak();
+                    }, 1000 * 60 * 15);
+                }
+
+                this.actualVortexTries = towerLogCount;
+
+                logger('ZUnivers Vortex Status Checked!');
             });
     }
 
