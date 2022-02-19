@@ -55,7 +55,7 @@ module.exports = class ZUnivers {
             .then(async ({data}) => {
                 const {towerStats: { 0: { towerName, maxFloorIndex, towerLogCount } }} = data;
 
-                if (this.actualVortexTries === towerLogCount) {
+                if (maxFloorIndex !== 5 && this.actualVortexTries === towerLogCount) {
                     sendMessage(
                         this.channel(),
                         '943447932160606228',
