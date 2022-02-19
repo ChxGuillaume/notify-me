@@ -7,7 +7,7 @@ module.exports = class ZUnivers {
     constructor(client) {
         this.client = client;
 
-        cron.schedule('* 12 * * *', () => {
+        cron.schedule('0,10 12 * * *', () => {
             this.fetchVortexStatus();
             this.fetchLootsStreak();
         }, {});
@@ -42,7 +42,7 @@ module.exports = class ZUnivers {
 
                     setTimeout(() =>{
                         this.fetchLootsStreak();
-                    }, 1000 * 60 * 15);
+                    }, 1000 * 60 * 20);
                 }
 
                 logger('ZUnivers Loot Streak Checked!');
@@ -70,7 +70,7 @@ module.exports = class ZUnivers {
 
                     setTimeout(() =>{
                         this.fetchLootsStreak();
-                    }, 1000 * 60 * 15);
+                    }, 1000 * 60 * 20);
                 }
 
                 this.actualVortexTries = towerLogCount;
