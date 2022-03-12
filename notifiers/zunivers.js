@@ -7,12 +7,13 @@ module.exports = class ZUnivers {
     constructor(client) {
         this.client = client;
 
-        cron.schedule('0,10 12 * * *', () => {
-            this.fetchVortexStatus();
+        cron.schedule('0 8 * * *', () => {
+            // this.fetchVortexStatus();
             this.fetchLootsStreak();
         }, {});
 
-        this.fetchVortexStatus();
+        // TODO check when vortex available
+        // this.fetchVortexStatus();
         this.fetchLootsStreak();
     }
 
@@ -24,11 +25,11 @@ module.exports = class ZUnivers {
 
     fetchLootsStreak() {
         axios
-            .get('https://zunivers-api.zerator.com/public/user/NiNoN%239999')
+            .get('https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity')
             .then(async ({data}) => {
-                const {lootStreak} = data;
+                const {lootInfos} = data;
 
-                if (!lootStreak[lootStreak.length - 1].loots) {
+                if (!lootInfos.pop().count) {
                     sendMessage(
                         this.channel(),
                         '943447932160606228',
@@ -42,7 +43,7 @@ module.exports = class ZUnivers {
 
                     setTimeout(() =>{
                         this.fetchLootsStreak();
-                    }, 1000 * 60 * 20);
+                    }, 1000 * 60 * 60);
                 }
 
                 logger('ZUnivers Loot Streak Checked!');
@@ -70,7 +71,7 @@ module.exports = class ZUnivers {
 
                     setTimeout(() =>{
                         this.fetchLootsStreak();
-                    }, 1000 * 60 * 20);
+                    }, 1000 * 60 * 60);
                 }
 
                 this.actualVortexTries = towerLogCount;
