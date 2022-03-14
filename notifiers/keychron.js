@@ -21,9 +21,11 @@ module.exports = class Keychron {
         cron.schedule('*/5 * * * *', () => {
             this.fetch('https://www.keychron.com/products/keychron-k5-ultra-slim-wireless-mechanical-keyboard?variant=39559179108441');
             this.fetch('https://www.keychron.com/products/low-profile-keychron-optical-switch-set-87-pcs?variant=32264204615769');
+            this.fetch('https://www.keychron.com/products/keychron-custom-coiled-cable?variant=39408315826265');
         }, {});
         this.fetch('https://www.keychron.com/products/keychron-k5-ultra-slim-wireless-mechanical-keyboard?variant=39559179108441');
         this.fetch('https://www.keychron.com/products/low-profile-keychron-optical-switch-set-87-pcs?variant=32264204615769');
+        this.fetch('https://www.keychron.com/products/keychron-custom-coiled-cable?variant=39408315826265');
     }
 
     save() {
