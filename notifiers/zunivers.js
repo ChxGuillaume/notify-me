@@ -72,7 +72,7 @@ module.exports = class ZUnivers {
                     );
 
                     setTimeout(() =>{
-                        this.fetchLootsStreak();
+                        this.fetchVortexStatus();
                     }, 1000 * 60 * 60);
                 }
 
