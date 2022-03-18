@@ -56,7 +56,7 @@ module.exports = class ZUnivers {
             .then(async ({data}) => {
                 const {towerStats: { 0: { towerName, maxFloorIndex, towerLogCount, towerSeasonBeginDate, towerSeasonEndDate } }} = data;
 
-                const maxTries = moment().diff(towerSeasonBeginDate, 'days') * 2;
+                const maxTries = moment().diff(moment(towerSeasonBeginDate).subtract(12, 'hours'), 'days') * 2;
 
                 if (maxFloorIndex !== 5 && towerLogCount < maxTries && moment().isBefore(towerSeasonEndDate)) {
                     sendMessage(
