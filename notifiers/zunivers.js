@@ -8,7 +8,7 @@ module.exports = class ZUnivers {
     constructor(client) {
         this.client = client;
 
-        cron.schedule('0 8 * * *', () => {
+        cron.schedule('0 8,14 * * *', () => {
             this.fetchVortexStatus();
             this.fetchLootsStreak();
         }, {});
