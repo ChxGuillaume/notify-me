@@ -2,7 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const cron = require('node-cron');
 const logger = require('../utils/logger');
-const sendMessage = require('../utils/sendMessage');
+const {sendMessage, checkAndDeleteMessage} = require('../utils/messages');
 const fs = require("fs");
 const path = require("path");
 
@@ -52,8 +52,8 @@ module.exports = class Keychron {
                     featured_media: {preview_image: {src: image}}
                 } = JSON.parse($keyboardPage('[aria-label="Variant JSON"]').text().trim());
 
-                if (available !== this.keyboard_vailable[url] && available)
-                    sendMessage(
+                if (available !== this.keyboard_vailable[url] && available) {
+                    await sendMessage(
                         this.channel(),
                         '921108721642389524',
                         {
@@ -62,8 +62,11 @@ module.exports = class Keychron {
                             image,
                             price: `$${price / 100}`,
                             options
-                        }
+                        }, [], 'keychron-' + url
                     );
+                } else {
+                    await checkAndDeleteMessage(this.channel(), 'keychron-' + url);
+                }
 
                 this.keyboard_vailable[url] = available;
 

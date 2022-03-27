@@ -4,7 +4,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const cron = require('node-cron');
 const logger = require('../utils/logger');
-const sendMessage = require('../utils/sendMessage');
+const {sendMessage, checkAndDeleteMessage} = require('../utils/messages');
 
 module.exports = class ShopAnthonyWang {
 
@@ -50,9 +50,9 @@ module.exports = class ShopAnthonyWang {
 
                     const url = 'https://shopanthonywang.com' + $shoesPage(item).find('.grid-view-item__link').attr('href');
 
-                    if (!this.shoes[url])
+                    if (!this.shoes[url]) {
                         await axios.get(url)
-                            .then(({data}) => {
+                            .then(async ({data}) => {
                                 const $shoePage = cheerio.load(data);
 
                                 let {
@@ -77,20 +77,23 @@ module.exports = class ShopAnthonyWang {
                                     .filter(({available}) => available)
                                     .map(({title}) => (`${title}`));
 
-                                sendMessage(
+                                await sendMessage(
                                     this.channel(),
                                     '921116258110406717',
                                     {title, url, image, price, options: description},
                                     [{
                                         name: 'Available Sizes',
                                         value: variants.join(' - ')
-                                    }]
+                                    }],
+                                    'shop-anthony-wang-' + url
                                 );
 
                                 newShoes[url] = true;
                             });
-                    else
+                    } else {
                         newShoes[url] = true;
+                        await checkAndDeleteMessage(this.channel(), 'shop-anthony-wang-' + url);
+                    }
                 }
 
                 this.shoes = newShoes;
