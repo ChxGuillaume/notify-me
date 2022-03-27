@@ -64,7 +64,7 @@ module.exports = class Keychron {
                             options
                         }, [], 'keychron-' + url
                     );
-                } else {
+                } else if (!available) {
                     await checkAndDeleteMessage(this.channel(), 'keychron-' + url);
                 }
 
