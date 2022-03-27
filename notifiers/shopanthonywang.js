@@ -4,7 +4,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const cron = require('node-cron');
 const logger = require('../utils/logger');
-const {sendMessage, checkAndDeleteMessage} = require('../utils/messages');
+const {sendMessage} = require('../utils/messages');
 
 module.exports = class ShopAnthonyWang {
 
@@ -92,7 +92,6 @@ module.exports = class ShopAnthonyWang {
                             });
                     } else {
                         newShoes[url] = true;
-                        await checkAndDeleteMessage(this.channel(), 'shop-anthony-wang-' + url);
                     }
                 }
 
