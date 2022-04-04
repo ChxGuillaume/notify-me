@@ -26,7 +26,7 @@ module.exports = class ZLan {
 
         (async () => {
             logger('ZLAN - Starting Puppeteer', 'yellow');
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({args: ['--no-sandbox']});
             const zlan = await browser.newPage();
             await zlan.goto('https://www.weezevent.com/widget_billeterie.php?id_evenement=820287&widget_key=E820287&locale=fr_FR&color_primary=150d4a&width_auto=1&o=minisite_v2&code=65388&neo=1');
             await zlan.waitForNavigation();
