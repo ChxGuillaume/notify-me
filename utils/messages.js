@@ -11,7 +11,7 @@ function save() {
     fs.writeFileSync(path.join('data', 'Messages.json'), JSON.stringify(messages));
 }
 
-async function sendMessage(channel, roleId, item, addedFields = [], messageTag = null) {
+async function sendMessage(channel, roleId, item, addedFields = [], messageTag = null, files = []) {
     const {title, description, url, image, price, options, buttonText} = item;
 
     const message = await channel
@@ -40,6 +40,7 @@ async function sendMessage(channel, roleId, item, addedFields = [], messageTag =
                     type: 2
                 }]
             }] : undefined,
+            files
         })
 
     if (messageTag) {

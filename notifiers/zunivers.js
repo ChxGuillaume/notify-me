@@ -44,7 +44,7 @@ module.exports = class ZUnivers {
                     await checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots');
                 }
 
-                logger('ZUnivers Loot Streak Checked!');
+                logger('ZUnivers - Loot Streak Checked!');
             });
     }
 
@@ -82,7 +82,7 @@ module.exports = class ZUnivers {
                     await checkAndDeleteMessage(this.channel(), 'zuni-vortex-tries');
                 }
 
-                logger('ZUnivers Vortex Status Checked!');
+                logger('ZUnivers - Vortex Status Checked!');
             });
     }
 
