@@ -15,6 +15,12 @@ module.exports = class ZUnivers {
 
         this.fetchVortexStatus();
         this.fetchLootsStreak();
+
+        client.on('interactionCreate', async interaction => {
+            if (!interaction.isCommand()) return;
+
+            if (interaction.commandName === 'zunivers-daily') await this.fetchLootsStreakInteraction(interaction);
+        });
     }
 
     channel() {
@@ -24,6 +30,8 @@ module.exports = class ZUnivers {
     }
 
     fetchLootsStreak() {
+        if (this.lootsStreakSpecifiedDate) return;
+
         axios
             .get('https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity')
             .then(async ({data}) => {
@@ -46,6 +54,21 @@ module.exports = class ZUnivers {
 
                 logger('ZUnivers - Loot Streak Checked!');
             });
+    }
+
+    async fetchLootsStreakInteraction(interaction) {
+        const hours = interaction.options.get('hour').value;
+        const minutes = interaction.options.get('minute')?.value || 0;
+        const date = moment(`${hours}:${minutes}`, 'HH:mm');
+        if (date.isBefore(moment())) date.add(1, 'day');
+
+        this.lootsStreakSpecifiedDate = date.toDate();
+        setTimeout(() => {
+            this.lootsStreakSpecifiedDate = null;
+            this.fetchLootsStreak();
+        }, date.diff(moment()));
+
+        await interaction.reply({ content: `Will check for you <t:${date.unix()}:R>`, ephemeral: true });
     }
 
     fetchVortexStatus() {
