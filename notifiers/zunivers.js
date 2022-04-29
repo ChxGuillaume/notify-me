@@ -50,23 +50,29 @@ module.exports = class ZUnivers {
             .then(async ({ data }) => {
                 const { lootInfos } = data
                 const event = lootInfos.at(-1)
-                let lootStreak = lootInfos
+
+                let weekStreak = lootInfos
                     .slice(-7, -1)
                     .filter((event) => event.count === 1).length
-                if (lootStreak === 6 && event.count === 1) lootStreak = 7
+                if (weekStreak === 6 && event.count === 1) weekStreak = 7
+
+                const lootStreak = lootInfos
+                    .slice()
+                    .reverse()
+                    .findIndex((event) => event.count === 0)
 
                 let title = 'ZUnivers Daily Loot'
                 let description = `${lootStreak} loots streak, command (!journa)`
 
-                if (lootStreak === 6) {
+                if (weekStreak === 6) {
                     title = 'ZUnivers Daily Loot (+bonus)'
                     description = `${lootStreak} loots streak, command (!journa + !bonus)`
-                } else if (lootStreak === 7) {
+                } else if (weekStreak === 7) {
                     title = 'ZUnivers Daily Bonus'
                     description = `${lootStreak} loots streak, command (!bonus)`
                 }
 
-                if (!event.count || [6, 7].includes(lootStreak)) {
+                if (!event.count || [6, 7].includes(weekStreak)) {
                     await sendMessage(
                         this.channel(),
                         '943447932160606228',
