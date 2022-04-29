@@ -55,6 +55,7 @@ module.exports = class ZUnivers {
                     .slice(-7, -1)
                     .filter((event) => event.count === 1).length
                 if (weekStreak === 6 && event.count === 1) weekStreak = 7
+                else if (weekStreak === 6 && event.count === 2) weekStreak = 8
 
                 const lootStreak = lootInfos
                     .slice()
