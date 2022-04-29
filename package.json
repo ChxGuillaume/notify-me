@@ -26,5 +26,8 @@
     "node-cron": "^3.0.0",
     "path": "^0.12.7",
     "puppeteer": "^13.5.2"
+  },
+  "devDependencies": {
+    "prettier": "^2.6.2"
   }
 }
