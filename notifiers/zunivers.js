@@ -81,7 +81,7 @@ module.exports = class ZUnivers {
                             title,
                             description,
                             url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
-                            image: 'https://nekotiki.fr/zunivers.png',
+                            thumbnail: 'https://nekotiki.fr/zunivers.png',
                             buttonText: 'Daily Channel',
                         },
                         [],
@@ -154,7 +154,7 @@ module.exports = class ZUnivers {
                             \n\n
                             ${maxTries - towerLogCount} tries left!`,
                             url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
-                            image: 'https://nekotiki.fr/zunivers.png',
+                            thumbnail: 'https://nekotiki.fr/zunivers.png',
                             buttonText: 'Vortex Channel',
                         },
                         [],

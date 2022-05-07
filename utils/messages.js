@@ -24,7 +24,35 @@ async function sendMessage(
     messageTag = null,
     files = []
 ) {
-    const { title, description, url, image, price, options, buttonText } = item
+    const {
+        title,
+        description,
+        url,
+        thumbnail,
+        image,
+        price,
+        options,
+        buttonText,
+        deleteButton,
+    } = item
+
+    const buttons = []
+
+    if (url)
+        buttons.push({
+            type: 2,
+            style: 5,
+            label: buttonText || 'Link',
+            url: url,
+        })
+
+    if (deleteButton)
+        buttons.push({
+            type: 2,
+            custom_id: `${messageTag}`,
+            style: 4,
+            emoji: '🗑',
+        })
 
     const message = await channel.send({
         content: `<@&${roleId}>`,
@@ -33,7 +61,8 @@ async function sendMessage(
                 title: title,
                 url: url,
                 description: description,
-                thumbnail: { url: image },
+                thumbnail: { url: thumbnail },
+                image: { url: image },
                 fields:
                     price && options
                         ? [
@@ -50,21 +79,8 @@ async function sendMessage(
                         : undefined,
             },
         ],
-        components: url
-            ? [
-                  {
-                      type: 1,
-                      components: [
-                          {
-                              style: 5,
-                              label: buttonText || `Buy Now`,
-                              url: url,
-                              disabled: false,
-                              type: 2,
-                          },
-                      ],
-                  },
-              ]
+        components: buttons.length
+            ? [{ type: 1, components: buttons }]
             : undefined,
         files,
     })

@@ -12,6 +12,7 @@ const ShopAnthonyWang = require('./notifiers/shopanthonywang')
 const Keychron = require('./notifiers/keychron')
 const ZUnivers = require('./notifiers/zunivers')
 // const ZLan = require('./notifiers/zlan');
+const BeatStar = require('./notifiers/beatstar')
 
 const commands = [
     {
@@ -55,6 +56,7 @@ client.on('ready', async () => {
     new Keychron(client)
     new ZUnivers(client)
     // new ZLan(client);
+    new BeatStar(client)
 
     try {
         console.log('Started refreshing application (/) commands.'.gray)
