@@ -53,24 +53,36 @@ module.exports = class ZUnivers {
 
                 let weekStreak = lootInfos
                     .slice(-7, -1)
-                    .filter((event) => event.count === 1).length
-                if (weekStreak === 6 && event.count === 1) weekStreak = 7
-                else if (weekStreak === 6 && event.count === 2) weekStreak = 8
+                    .filter(
+                        (event) => event.count >= 1000 && event.count < 2000
+                    ).length
+                if (
+                    weekStreak === 6 &&
+                    event.count >= 1000 &&
+                    event.count < 2000
+                ) {
+                    weekStreak = 7
+                } else if (weekStreak === 6 && event.count >= 2000) {
+                    weekStreak = 8
+                }
 
                 const lootStreak = lootInfos
                     .slice()
                     .reverse()
+                    .slice(1)
                     .findIndex((event) => event.count === 0)
 
                 let title = 'ZUnivers Daily Loot'
-                let description = `${lootStreak} loots streak, command (!journa)`
+                let description = `(${lootStreak} + 1) loots streak, command (!journa)`
 
                 if (weekStreak === 6) {
                     title = 'ZUnivers Daily Loot (+bonus)'
-                    description = `${lootStreak} loots streak, command (!journa + !bonus)`
+                    description = `(${lootStreak} + 1) loots streak, command (!journa + !bonus)`
                 } else if (weekStreak === 7) {
                     title = 'ZUnivers Daily Bonus'
-                    description = `${lootStreak} loots streak, command (!bonus)`
+                    description = `${
+                        lootStreak + 1
+                    } loots streak, command (!bonus)`
                 }
 
                 if (!event.count || [6, 7].includes(weekStreak)) {
