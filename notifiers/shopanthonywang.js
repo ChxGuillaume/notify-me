@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
-const cheerio = require('cheerio')
 const cron = require('node-cron')
 const logger = require('../utils/logger')
 const { sendMessage, deleteMessage } = require('../utils/messages')
@@ -99,6 +98,8 @@ module.exports = class ShopAnthonyWang {
                     })
 
                     this.save()
+
+                    logger('ShopAnthonyWang Checked!')
                 }
             })
     }
