@@ -69,10 +69,7 @@ module.exports = class ShopAnthonyWang {
                     this.save()
                 } else {
                     products.forEach((product) => {
-                        if (
-                            !this.shoes.newProducts[product.id] ||
-                            product.id === 7449345229015
-                        ) {
+                        if (!this.shoes.newProducts[product.id]) {
                             const newProduct = this.addNewProduct(product)
 
                             sendMessage(
