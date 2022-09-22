@@ -11,8 +11,11 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN)
 const ShopAnthonyWang = require('./notifiers/shopanthonywang')
 const Keychron = require('./notifiers/keychron')
 const ZUnivers = require('./notifiers/zunivers')
-// const ZLan = require('./notifiers/zlan');
+// const ZLan = require('./notifiers/zlan')
 const BeatStar = require('./notifiers/beatstar')
+const CustomEvents = require('./notifiers/custom')
+// const MandatoryEvent = require('./notifiers/mandatory-event')
+const MandatoryShop = require('./notifiers/mandatory-shop')
 
 const commands = [
     {
@@ -46,6 +49,38 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'custom-event',
+        description: 'Custom Events',
+        options: [
+            {
+                type: 1,
+                name: 'create',
+                description: 'Create a custom event',
+                options: [
+                    {
+                        type: 3,
+                        name: 'date',
+                        description:
+                            'Date of the custom event (YYYY-MM-DD HH:mm)',
+                        required: true,
+                    },
+                    {
+                        type: 3,
+                        name: 'title',
+                        description: 'Title of the custom event',
+                        required: true,
+                    },
+                    {
+                        type: 3,
+                        name: 'link',
+                        description: 'Link of the custom event',
+                        required: false,
+                    },
+                ],
+            },
+        ],
+    },
 ]
 
 client.on('ready', async () => {
@@ -55,8 +90,11 @@ client.on('ready', async () => {
     new ShopAnthonyWang(client)
     new Keychron(client)
     new ZUnivers(client)
-    // new ZLan(client);
+    // new ZLan(client)
     new BeatStar(client)
+    // new MandatoryEvent(client)
+    new MandatoryShop(client)
+    new CustomEvents(client)
 
     try {
         console.log('Started refreshing application (/) commands.'.gray)

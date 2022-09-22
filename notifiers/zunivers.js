@@ -106,7 +106,7 @@ module.exports = class ZUnivers {
                     )
                 }
 
-                logger('ZUnivers - Loot Streak Checked!')
+                logger('ZUnivers - Loot Streak - Checked!')
             })
     }
 
@@ -179,7 +179,7 @@ module.exports = class ZUnivers {
                     )
                 }
 
-                logger('ZUnivers - Vortex Status Checked!')
+                logger('ZUnivers - Vortex Status - Checked!')
             })
     }
 }

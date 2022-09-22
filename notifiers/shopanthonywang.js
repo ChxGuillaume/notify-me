@@ -99,7 +99,7 @@ module.exports = class ShopAnthonyWang {
 
                     this.save()
 
-                    logger('ShopAnthonyWang Checked!')
+                    logger('ShopAnthonyWang - Checked!')
                 }
             })
     }
