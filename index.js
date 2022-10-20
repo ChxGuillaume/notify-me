@@ -15,7 +15,7 @@ const ZUnivers = require('./notifiers/zunivers')
 const BeatStar = require('./notifiers/beatstar')
 const CustomEvents = require('./notifiers/custom')
 // const MandatoryEvent = require('./notifiers/mandatory-event')
-const MandatoryShop = require('./notifiers/mandatory-shop')
+// const MandatoryShop = require('./notifiers/mandatory-shop')
 
 const commands = [
     {
@@ -93,7 +93,7 @@ client.on('ready', async () => {
     // new ZLan(client)
     new BeatStar(client)
     // new MandatoryEvent(client)
-    new MandatoryShop(client)
+    // new MandatoryShop(client)
     new CustomEvents(client)
 
     try {
