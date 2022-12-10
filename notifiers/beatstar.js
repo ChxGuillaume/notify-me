@@ -39,14 +39,15 @@ module.exports = class BeatStar {
     }
 
     async checkTweet(tweet_id) {
-        const {
-            data: tweet,
-            includes: { media },
-        } = await this.twitter.v2.singleTweet(tweet_id, {
+        const tweetResponse = await this.twitter.v2.singleTweet(tweet_id, {
             expansions: 'attachments.media_keys',
             'media.fields': 'url',
             'tweet.fields': ['attachments', 'entities', 'public_metrics'],
         })
+
+        const { data: tweet } = tweetResponse
+
+        const media = tweetResponse.includes?.media
 
         tweet.entities.urls = tweet.entities.urls.filter((e) => {
             return !tweet.attachments.media_keys.includes(e?.media_key)

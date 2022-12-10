@@ -1,7 +1,7 @@
 require('colors')
 require('dotenv').config()
-const { Client, Intents } = require('discord.js')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const { Client } = require('discord.js')
+const client = new Client({ intents: ['Guilds'] })
 
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
@@ -128,14 +128,6 @@ const commands = [
                 type: 1,
                 name: 'delete',
                 description: 'Delete a custom recurring event',
-                options: [
-                    {
-                        type: 3,
-                        name: 'uuid',
-                        description: 'event uuid',
-                        required: true,
-                    },
-                ],
             },
         ],
     },

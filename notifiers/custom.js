@@ -23,6 +23,14 @@ module.exports = class CustomEvents {
         })
 
         client.on('interactionCreate', async (interaction) => {
+            if (!interaction.isAnySelectMenu()) return
+
+            if (interaction.customId === 'delete-recurring-events-uuids') {
+                this.deleteCustomEventRecurrence(interaction)
+            }
+        })
+
+        client.on('interactionCreate', async (interaction) => {
             if (!interaction.isButton()) return
 
             if (interaction.customId.startsWith('custom-event')) {
@@ -48,7 +56,7 @@ module.exports = class CustomEvents {
                         await this.listCustomEventRecurrence(interaction)
                         break
                     case 'delete':
-                        await this.deleteCustomEventRecurrence(interaction)
+                        await this.deleteCustomEventRecurrenceSelect(interaction)
                         break
                 }
         })
@@ -151,36 +159,56 @@ module.exports = class CustomEvents {
         })
     }
 
+    deleteCustomEventRecurrenceSelect(interaction) {
+        interaction.reply({
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 3,
+                            custom_id: 'delete-recurring-events-uuids',
+                            placeholder: 'Choose Event(s) to delete',
+                            min_values: 1,
+                            max_values: this.custom_events.recurring_events.length,
+                            options: this.custom_events.recurring_events.map((re) => ({
+                                value: re.uuid,
+                                label: re.title,
+                                description: re.description,
+                            })),
+                        },
+                    ],
+                },
+            ],
+            ephemeral: true,
+        })
+    }
+
     deleteCustomEventRecurrence(interaction) {
-        const uuid = interaction.options.get('uuid').value
+        let deleted = false
+        const uuids = interaction.values
 
-        if (uuid === 'all') {
-            this.custom_events.recurring_events = []
-            this.save()
+        for (const uuid of uuids) {
+            const event_index = this.custom_events.recurring_events.findIndex((re) => re.uuid === uuid)
 
-            interaction.reply({
-                content: 'All Recurring Event Deleted',
-                ephemeral: true,
-            })
-
-            return
+            if (event_index >= 0) {
+                this.custom_events.recurring_events.splice(event_index, 1)
+                deleted = true
+            }
         }
 
-        const event_index = this.custom_events.recurring_events.findIndex((re) => re.uuid === uuid)
-
-        if (event_index >= 0) {
-            this.custom_events.recurring_events.splice(event_index, 1)
+        if (deleted) {
             this.save()
 
-            interaction.reply({
+            interaction.update({
                 content: 'Recurring Event Deleted',
+                components: [],
                 ephemeral: true,
             })
-        } else {
-            interaction.reply({
-                content: 'Recurring Event Does not exist',
-                ephemeral: true,
-            })
+
+            setTimeout(() => {
+                interaction.deleteReply().then()
+            }, 1000 * 5)
         }
     }
 
