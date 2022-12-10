@@ -65,7 +65,7 @@ module.exports = class CustomEvents {
     }
 
     createCustomEvent(interaction) {
-        const date = moment(interaction.options.get('date').value, 'YYYY-MM-DD HH:mm', true)
+        const date = moment(interaction.options.get('date').value, 'YYYY-MM-DD HH:mm')
 
         console.log(
             interaction.options.get('date'),
@@ -95,7 +95,7 @@ module.exports = class CustomEvents {
         const startAt = interaction.options.get('start-at')?.value
 
         let nextOccurrence = recurrence * 60
-        const startAtDate = moment(startAt, 'YYYY-MM-DD HH:mm', true)
+        const startAtDate = moment(startAt, 'YYYY-MM-DD HH:mm')
 
         if (startAtDate.isValid()) {
             nextOccurrence = startAtDate.diff(moment(), 'seconds')
@@ -129,7 +129,7 @@ module.exports = class CustomEvents {
                     title: 'List of Recurring Events',
                     fields: this.custom_events.recurring_events.map((re) => {
                         const nextOccurrence = re.recurrence * 60 * 1000
-                        let nextOccurrenceDate = moment(re.nuxt_occurrence, 'YYYY-MM-DD HH:mm:ss', true)
+                        let nextOccurrenceDate = moment(re.nuxt_occurrence, 'YYYY-MM-DD HH:mm:ss')
 
                         if (!nextOccurrenceDate.isValid()) {
                             nextOccurrenceDate = moment().add(nextOccurrence, 'milliseconds')
@@ -189,7 +189,7 @@ module.exports = class CustomEvents {
 
         if (event) {
             let nextOccurrence = event.recurrence * 60 * 1000
-            let startAtDate = moment(event.nuxt_occurrence, 'YYYY-MM-DD HH:mm:ss', true)
+            let startAtDate = moment(event.nuxt_occurrence, 'YYYY-MM-DD HH:mm:ss')
 
             if (startAtDate.isValid()) {
                 nextOccurrence = startAtDate.diff(moment(), 'seconds') * 1000
