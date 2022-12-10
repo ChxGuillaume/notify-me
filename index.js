@@ -30,8 +30,7 @@ const commands = [
                     {
                         type: 4,
                         name: 'hour',
-                        description:
-                            'Hour at which to notify check ZUnivers Daily',
+                        description: 'Hour at which to notify check ZUnivers Daily',
                         required: true,
                         min: 0,
                         max: 23,
@@ -39,8 +38,7 @@ const commands = [
                     {
                         type: 4,
                         name: 'minute',
-                        description:
-                            'Minute at which to notify check ZUnivers Daily',
+                        description: 'Minute at which to notify check ZUnivers Daily',
                         required: false,
                         min: 0,
                         max: 23,
@@ -61,8 +59,7 @@ const commands = [
                     {
                         type: 3,
                         name: 'date',
-                        description:
-                            'Date of the custom event (YYYY-MM-DD HH:mm)',
+                        description: 'Date of the custom event (YYYY-MM-DD HH:mm)',
                         required: true,
                     },
                     {
@@ -76,6 +73,67 @@ const commands = [
                         name: 'link',
                         description: 'Link of the custom event',
                         required: false,
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        name: 'custom-event-recurring',
+        description: 'Custom Events Recurring',
+        options: [
+            {
+                type: 1,
+                name: 'create',
+                description: 'Create a custom recurring event',
+                options: [
+                    {
+                        type: 4,
+                        name: 'recurrence',
+                        description: 'Recurrence in Minutes',
+                        required: true,
+                    },
+                    {
+                        type: 3,
+                        name: 'title',
+                        description: 'Title of the custom event',
+                        required: true,
+                    },
+                    {
+                        type: 3,
+                        name: 'description',
+                        description: 'Link of the custom event',
+                        required: false,
+                    },
+                    {
+                        type: 3,
+                        name: 'start-at',
+                        description: 'Date of start of the custom event (YYYY-MM-DD HH:mm)',
+                        required: false,
+                    },
+                    {
+                        type: 3,
+                        name: 'link',
+                        description: 'Link of the custom event',
+                        required: false,
+                    },
+                ],
+            },
+            {
+                type: 1,
+                name: 'list',
+                description: 'List custom recurring events',
+            },
+            {
+                type: 1,
+                name: 'delete',
+                description: 'Delete a custom recurring event',
+                options: [
+                    {
+                        type: 3,
+                        name: 'uuid',
+                        description: 'event uuid',
+                        required: true,
                     },
                 ],
             },

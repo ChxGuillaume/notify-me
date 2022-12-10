@@ -13,11 +13,6 @@ module.exports = class BeatStar {
 
             if (interaction.customId.startsWith('beatstar')) {
                 await deleteMessage(this.channel(), interaction.message.id)
-
-                interaction.reply({
-                    content: 'Message Deleted!',
-                    ephemeral: true,
-                })
             }
         })
     }
@@ -25,9 +20,7 @@ module.exports = class BeatStar {
     channel() {
         return this.client.guilds.cache
             .find((guild) => guild.id === '914899103035564132')
-            .channels.cache.find(
-                (channel) => channel.id === '972444264569118750'
-            )
+            .channels.cache.find((channel) => channel.id === '972444264569118750')
     }
 
     async subscribeTweets() {
@@ -36,12 +29,8 @@ module.exports = class BeatStar {
         })
 
         const streamFilter = await this.twitter.v2.searchStream()
-        streamFilter.on(ETwitterStreamEvent.Data, ({ data: { id } }) =>
-            this.checkTweet(id)
-        )
-        streamFilter.on(ETwitterStreamEvent.Connected, () =>
-            console.log('Stream is started.')
-        )
+        streamFilter.on(ETwitterStreamEvent.Data, ({ data: { id } }) => this.checkTweet(id))
+        streamFilter.on(ETwitterStreamEvent.Connected, () => console.log('Stream is started.'))
 
         await streamFilter.connect({
             autoReconnect: true,
@@ -63,9 +52,7 @@ module.exports = class BeatStar {
             return !tweet.attachments.media_keys.includes(e?.media_key)
         })
 
-        tweet.entities.urls.forEach(
-            (e) => (tweet.text = tweet.text.replace(e.url, '').trim())
-        )
+        tweet.entities.urls.forEach((e) => (tweet.text = tweet.text.replace(e.url, '').trim()))
 
         if (tweet.entities.urls[0]?.expanded_url)
             sendMessage(
