@@ -127,10 +127,24 @@ module.exports = class CustomEvents {
             embeds: [
                 {
                     title: 'List of Recurring Events',
-                    fields: this.custom_events.recurring_events.map((re) => ({
-                        name: `UUID: ${re.uuid}`,
-                        value: `Title: ${re.title}`,
-                    })),
+                    fields: this.custom_events.recurring_events.map((re) => {
+                        const nextOccurrence = re.recurrence * 60 * 1000
+                        let nextOccurrenceDate = moment(re.nuxt_occurrence, 'YYYY-MM-DD HH:mm:ss', true)
+
+                        if (!nextOccurrenceDate.isValid()) {
+                            nextOccurrenceDate = moment().add(nextOccurrence, 'milliseconds')
+                        }
+
+                        return {
+                            name: `Title: ${re.title}`,
+                            value: [
+                                re.description && `Description: \`${re.description}\``,
+                                `UUID: \`${re.uuid}\``,
+                                `Next notification <t:${nextOccurrenceDate.unix()}:R>`,
+                            ].join('\n'),
+                            inline: true,
+                        }
+                    }),
                 },
             ],
             ephemeral: true,
