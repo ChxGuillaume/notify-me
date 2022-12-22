@@ -1,5 +1,5 @@
 const { TwitterApi, ETwitterStreamEvent } = require('twitter-api-v2')
-const { sendMessage, deleteMessage } = require('../utils/messages')
+const { sendMessage } = require('../utils/messages')
 
 module.exports = class BeatStar {
     constructor(client) {
@@ -12,7 +12,7 @@ module.exports = class BeatStar {
             if (!interaction.isButton()) return
 
             if (interaction.customId.startsWith('beatstar')) {
-                await deleteMessage(this.channel(), interaction.message.id)
+                interaction.message.delete()
             }
         })
     }

@@ -1,4 +1,4 @@
-const { sendMessage, deleteMessage } = require('../utils/messages')
+const { sendMessage } = require('../utils/messages')
 const moment = require('moment')
 const fs = require('fs')
 const path = require('path')
@@ -34,7 +34,7 @@ module.exports = class CustomEvents {
             if (!interaction.isButton()) return
 
             if (interaction.customId.startsWith('custom-event')) {
-                await deleteMessage(this.channel(), interaction.message.id)
+                interaction.message.delete()
             }
         })
 
