@@ -35,79 +35,56 @@ module.exports = class ZUnivers {
     channel() {
         return this.client.guilds.cache
             .find((guild) => guild.id === '914899103035564132')
-            .channels.cache.find(
-                (channel) => channel.id === '943448048753840159'
-            )
+            .channels.cache.find((channel) => channel.id === '943448048753840159')
     }
 
     fetchLootsStreak() {
         if (this.lootsStreakSpecifiedDate) return
 
-        axios
-            .get(
-                'https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity'
-            )
-            .then(async ({ data }) => {
-                const { lootInfos } = data
-                const event = lootInfos.at(-1)
+        axios.get('https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity').then(async ({ data }) => {
+            const { lootInfos } = data
+            const event = lootInfos.at(-1)
 
-                let weekStreak = lootInfos
-                    .slice(-7, -1)
-                    .filter(
-                        (event) => event.count >= 1000 && event.count < 2000
-                    ).length
-                if (
-                    weekStreak === 6 &&
-                    event.count >= 1000 &&
-                    event.count < 2000
-                ) {
-                    weekStreak = 7
-                } else if (weekStreak === 6 && event.count >= 2000) {
-                    weekStreak = 8
-                }
+            let weekStreak = lootInfos.slice(-7, -1).filter((event) => event.count >= 1000 && event.count < 2000).length
+            if (weekStreak === 6 && event.count >= 1000 && event.count < 2000) {
+                weekStreak = 7
+            } else if (weekStreak === 6 && event.count >= 2000) {
+                weekStreak = 8
+            }
 
-                const lootStreak = lootInfos
-                    .slice()
-                    .reverse()
-                    .slice(1)
-                    .findIndex((event) => event.count === 0)
+            const lootStreak = lootInfos.findIndex((event) => event.count === 0)
 
-                let title = 'ZUnivers Daily Loot'
-                let description = `(${lootStreak} + 1) loots streak, command (!journa)`
+            let title = 'ZUnivers Daily Loot'
+            let description = `(${lootStreak} + 1) loots streak, command (!journa)`
 
-                if (weekStreak === 6) {
-                    title = 'ZUnivers Daily Loot (+bonus)'
-                    description = `(${lootStreak} + 1) loots streak, command (!journa + !bonus)`
-                } else if (weekStreak === 7) {
-                    title = 'ZUnivers Daily Bonus'
-                    description = `${
-                        lootStreak + 1
-                    } loots streak, command (!bonus)`
-                }
+            if (weekStreak === 6) {
+                title = 'ZUnivers Daily Loot (+bonus)'
+                description = `(${lootStreak} + 1) loots streak, command (!journa + !bonus)`
+            } else if (weekStreak === 7) {
+                title = 'ZUnivers Daily Bonus'
+                description = `${lootStreak + 1} loots streak, command (!bonus)`
+            }
 
-                if (!event.count || [6, 7].includes(weekStreak)) {
-                    await sendMessage(
-                        this.channel(),
-                        '943447932160606228',
-                        {
-                            title,
-                            description,
-                            url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
-                            thumbnail: 'https://nekotiki.fr/zunivers.png',
-                            buttonText: 'Daily Channel',
-                        },
-                        [],
-                        'zunivers-daily-loots'
-                    )
-                } else {
-                    await checkAndDeleteMessage(
-                        this.channel(),
-                        'zunivers-daily-loots'
-                    )
-                }
+            if (!event.count || [6, 7].includes(weekStreak)) {
+                await sendMessage(
+                    this.channel(),
+                    '943447932160606228',
+                    {
+                        title,
+                        description,
+                        url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
+                        thumbnail: 'https://nekotiki.fr/zunivers.png',
+                        buttonText: 'Daily Channel',
+                    },
+                    [],
+                    'zunivers-daily-loots'
+                )
+            } else {
+                await checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots')
+            }
 
-                logger('ZUnivers - Loot Streak - Checked!')
-            })
+            logger('ZUnivers - Loot Streak - Checked!')
+        })
     }
 
     async fetchLootsStreakInteraction(interaction) {
@@ -129,57 +106,36 @@ module.exports = class ZUnivers {
     }
 
     fetchVortexStatus() {
-        axios
-            .get('https://zunivers-api.zerator.com/public/tower/NiNoN%239999')
-            .then(async ({ data }) => {
-                const {
-                    towerStats: {
-                        0: {
-                            towerName,
-                            maxFloorIndex,
-                            towerLogCount,
-                            towerSeasonBeginDate,
-                            towerSeasonEndDate,
-                        },
-                    },
-                } = data
+        axios.get('https://zunivers-api.zerator.com/public/tower/NiNoN%239999').then(async ({ data }) => {
+            const {
+                towerStats: {
+                    0: { towerName, maxFloorIndex, towerLogCount, towerSeasonBeginDate, towerSeasonEndDate },
+                },
+            } = data
 
-                const maxTries =
-                    moment().diff(
-                        moment(towerSeasonBeginDate).subtract(12, 'hours'),
-                        'days'
-                    ) * 2
+            const maxTries = moment().diff(moment(towerSeasonBeginDate).subtract(12, 'hours'), 'days') * 2
 
-                if (
-                    maxFloorIndex !== 5 &&
-                    towerLogCount < maxTries &&
-                    moment().isBefore(towerSeasonEndDate)
-                ) {
-                    await sendMessage(
-                        this.channel(),
-                        '943447932160606228',
-                        {
-                            title: 'ZUnivers Vortex Tries',
-                            description: `${towerName} - floor ${
-                                maxFloorIndex + 1
-                            }/6
+            if (maxFloorIndex !== 5 && towerLogCount < maxTries && moment().isBefore(towerSeasonEndDate)) {
+                await sendMessage(
+                    this.channel(),
+                    '943447932160606228',
+                    {
+                        title: 'ZUnivers Vortex Tries',
+                        description: `${towerName} - floor ${maxFloorIndex + 1}/6
                             \n\n
                             ${maxTries - towerLogCount} tries left!`,
-                            url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
-                            thumbnail: 'https://nekotiki.fr/zunivers.png',
-                            buttonText: 'Vortex Channel',
-                        },
-                        [],
-                        'zuni-vortex-tries'
-                    )
-                } else {
-                    await checkAndDeleteMessage(
-                        this.channel(),
-                        'zuni-vortex-tries'
-                    )
-                }
+                        url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
+                        thumbnail: 'https://nekotiki.fr/zunivers.png',
+                        buttonText: 'Vortex Channel',
+                    },
+                    [],
+                    'zuni-vortex-tries'
+                )
+            } else {
+                await checkAndDeleteMessage(this.channel(), 'zuni-vortex-tries')
+            }
 
-                logger('ZUnivers - Vortex Status - Checked!')
-            })
+            logger('ZUnivers - Vortex Status - Checked!')
+        })
     }
 }
