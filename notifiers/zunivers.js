@@ -41,7 +41,7 @@ module.exports = class ZUnivers {
     fetchLootsStreak() {
         if (this.lootsStreakSpecifiedDate) return
 
-        axios.get('https://zunivers-api.zerator.com/public/user/NiNoN%239999/activity').then(async ({ data }) => {
+        axios.get('https://zunivers-api.zerator.com/public/user/nekotiki%230/activity').then(async ({ data }) => {
             const { lootInfos } = data
             const event = lootInfos.at(-1)
 
@@ -106,7 +106,7 @@ module.exports = class ZUnivers {
     }
 
     fetchVortexStatus() {
-        axios.get('https://zunivers-api.zerator.com/public/tower/NiNoN%239999').then(async ({ data }) => {
+        axios.get('https://zunivers-api.zerator.com/public/tower/nekotiki%230').then(async ({ data }) => {
             const {
                 towerStats: {
                     0: { towerName, maxFloorIndex, towerLogCount, towerSeasonBeginDate, towerSeasonEndDate },
