@@ -41,7 +41,8 @@ module.exports = class ZUnivers {
     fetchLootsStreak() {
         if (this.lootsStreakSpecifiedDate) return
 
-        axios.get('https://zunivers-api.zerator.com/public/user/nekotiki/activity').then(async ({ data }) => {
+        axios.get('https://zunivers-api.zerator.com/public/loot/nekotiki?year=0').then(async ({ data }) => {
+            console.log(data)
             const { lootInfos } = data
             const event = lootInfos.at(-1)
 
