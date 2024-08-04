@@ -46,7 +46,6 @@ module.exports = class ZUnivers {
                 headers: { 'x-zunivers-rulesettype': 'NORMAL' },
             })
             .then(async ({ data }) => {
-                console.log('journa', data)
                 const { lootInfos } = data
                 const event = lootInfos.at(-1)
 
