@@ -9,7 +9,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN)
 
 // const DiscordSnowgiving = require('./notifiers/discord-snowgiving');
 const ShopAnthonyWang = require('./notifiers/shopanthonywang')
-const Keychron = require('./notifiers/keychron')
+// const Keychron = require('./notifiers/keychron')
 const ZUnivers = require('./notifiers/zunivers')
 // const ZLan = require('./notifiers/zlan')
 // const BeatStar = require('./notifiers/beatstar')
@@ -138,7 +138,7 @@ client.on('ready', async () => {
 
     //new DiscordSnowgiving(client);
     new ShopAnthonyWang(client)
-    new Keychron(client)
+    // new Keychron(client)
     new ZUnivers(client)
     // new ZLan(client)
     // new BeatStar(client)
