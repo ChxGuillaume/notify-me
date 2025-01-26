@@ -3,6 +3,21 @@ const axios = require('axios')
 const cron = require('node-cron')
 const logger = require('../utils/logger')
 const { sendMessage, checkAndDeleteMessage } = require('../utils/messages')
+const { z } = require('zod')
+
+const FormData = z.record(
+    z.string(),
+    z.array(
+        z.object({
+            amount: z.number(),
+            baseAmount: z.number(),
+            corporationAmount: z.number(),
+            date: z.string().datetime({ local: true }),
+            subscriptionAmount: z.number(),
+            type: z.enum(['DAILY', 'WEEKLY']),
+        })
+    )
+)
 
 module.exports = class ZUnivers {
     constructor(client) {
@@ -46,38 +61,16 @@ module.exports = class ZUnivers {
                 headers: { 'x-zunivers-rulesettype': 'NORMAL' },
             })
             .then(async ({ data }) => {
-                const { lootInfos } = data
-                const event = lootInfos.at(-1)
+                const result = FormData.safeParse(data)
 
-                let weekStreak = lootInfos
-                    .slice(-7, -1)
-                    .filter((event) => event.count >= 1000 && event.count < 2000).length
-                if (weekStreak === 6 && event.count >= 1000 && event.count < 2000) {
-                    weekStreak = 7
-                } else if (weekStreak === 6 && event.count >= 2000) {
-                    weekStreak = 8
-                }
-
-                const lootStreak = lootInfos.findIndex((event) => event.count === 0)
-
-                let title = 'ZUnivers Daily Loot'
-                let description = `(${lootStreak} + 1) loots streak, command (!journa)`
-
-                if (weekStreak === 6) {
-                    title = 'ZUnivers Daily Loot (+bonus)'
-                    description = `(${lootStreak} + 1) loots streak, command (!journa + !bonus)`
-                } else if (weekStreak === 7) {
-                    title = 'ZUnivers Daily Bonus'
-                    description = `${lootStreak + 1} loots streak, command (!bonus)`
-                }
-
-                if (!event.count || [6, 7].includes(weekStreak)) {
+                if (!result.success) {
+                    logger('ZUnivers - Loot Streak - Error:' + result.error.toString())
                     await sendMessage(
                         this.channel(),
                         '943447932160606228',
                         {
-                            title,
-                            description,
+                            title: 'ZUnivers Daily Loot',
+                            description: `Error with the API, please check manually`,
                             url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
                             thumbnail: 'https://nekotiki.fr/zunivers.png',
                             buttonText: 'Daily Channel',
@@ -85,11 +78,83 @@ module.exports = class ZUnivers {
                         [],
                         'zunivers-daily-loots'
                     )
-                } else {
-                    await checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots')
+                    return
                 }
 
-                logger('ZUnivers - Loot Streak - Checked!')
+                try {
+                    const currentDate = moment()
+                    const currentDateData = data[currentDate.format('YYYY-MM-DD')] || []
+
+                    const hasDaily = currentDateData.some((event) => event.type === 'DAILY')
+                    const hasWeekly = currentDateData.some((event) => event.type === 'WEEKLY')
+
+                    const lastWeekly7DaysAgoData =
+                        data[currentDate.clone().subtract(7, 'days').format('YYYY-MM-DD')] || []
+                    const lastWeekly7DaysAgo = lastWeekly7DaysAgoData.some((event) => event.type === 'WEEKLY')
+
+                    let hasLootPast6Days = false
+
+                    for (let day = 1; day < 7; day++) {
+                        const previousDate = currentDate.clone().subtract(day, 'days')
+                        const previousDateData = data[previousDate.format('YYYY-MM-DD')]
+
+                        if (!previousDateData || !previousDateData.some((event) => event.type === 'DAILY')) {
+                            hasLootPast6Days = false
+                            break
+                        }
+
+                        hasLootPast6Days = true
+                    }
+
+                    const notifyWeekly = !hasWeekly && hasLootPast6Days && lastWeekly7DaysAgo
+
+                    let title = 'ZUnivers Daily Loot'
+                    let description = `command (/journa)`
+
+                    if (!hasDaily && notifyWeekly) {
+                        title = 'ZUnivers Daily Loot (+bonus)'
+                        description = `command (/journa + /bonus)`
+                    } else if (notifyWeekly) {
+                        title = 'ZUnivers Daily Bonus'
+                        description = `command (/bonus)`
+                    }
+
+                    if (!hasDaily || notifyWeekly) {
+                        await sendMessage(
+                            this.channel(),
+                            '943447932160606228',
+                            {
+                                title,
+                                description,
+                                url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
+                                thumbnail: 'https://nekotiki.fr/zunivers.png',
+                                buttonText: 'Daily Channel',
+                            },
+                            [],
+                            'zunivers-daily-loots'
+                        )
+                    } else {
+                        await checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots')
+                    }
+
+                    logger('ZUnivers - Loot Streak - Checked!')
+                } catch (e) {
+                    logger('ZUnivers - Loot Streak - Error:' + e.toString())
+
+                    await sendMessage(
+                        this.channel(),
+                        '943447932160606228',
+                        {
+                            title: 'ZUnivers Daily Loot',
+                            description: `Error with the Calculation, please check manually`,
+                            url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
+                            thumbnail: 'https://nekotiki.fr/zunivers.png',
+                            buttonText: 'Daily Channel',
+                        },
+                        [],
+                        'zunivers-daily-loots'
+                    )
+                }
             })
     }
 
