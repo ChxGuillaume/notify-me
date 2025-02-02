@@ -24,7 +24,7 @@ module.exports = class ZUnivers {
         this.client = client
 
         cron.schedule(
-            '0,30 8-20 * * *',
+            '0,20,40 8-23 * * *',
             () => {
                 this.fetchVortexStatus()
                 this.fetchLootsStreak()
