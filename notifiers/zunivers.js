@@ -56,9 +56,25 @@ module.exports = class ZUnivers {
     fetchLootsStreak() {
         if (this.lootsStreakSpecifiedDate) return
 
+        this.lootStreakCheck(
+            'NORMAL',
+            'ZUnivers Daily',
+            'https://canary.discord.com/channels/138283154589876224/808432657838768168',
+            'zunivers-daily-loots'
+        )
+
+        this.lootStreakCheck(
+            'HARDCORE',
+            'ZUnivers Daily (Hardcore)',
+            'https://canary.discord.com/channels/138283154589876224/1263861962744270958',
+            'zunivers-daily-loots-hardcore'
+        )
+    }
+
+    lootStreakCheck(rule_set_type, title_base, channel_url, tag) {
         axios
             .get('https://zunivers-api.zerator.com/public/loot/nekotiki?year=0', {
-                headers: { 'x-zunivers-rulesettype': 'NORMAL' },
+                headers: { 'x-zunivers-rulesettype': rule_set_type },
             })
             .then(async ({ data }) => {
                 const result = FormData.safeParse(data)
@@ -69,14 +85,12 @@ module.exports = class ZUnivers {
                         this.channel(),
                         '943447932160606228',
                         {
-                            title: 'ZUnivers Daily Loot',
+                            title: `${title_base} Loot`,
                             description: `Error with the API, please check manually`,
-                            url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
                             thumbnail: 'https://nekotiki.fr/zunivers.png',
-                            buttonText: 'Daily Channel',
                         },
                         [],
-                        'zunivers-daily-loots'
+                        tag
                     )
                     return
                 }
@@ -108,14 +122,14 @@ module.exports = class ZUnivers {
 
                     const notifyWeekly = !hasWeekly && hasLootPast6Days && lastWeekly7DaysAgo
 
-                    let title = 'ZUnivers Daily Loot'
+                    let title = `${title_base} Loot`
                     let description = `command (/journa)`
 
                     if (!hasDaily && notifyWeekly) {
-                        title = 'ZUnivers Daily Loot (+bonus)'
+                        title = `${title_base} Loot (+bonus)`
                         description = `command (/journa + /bonus)`
                     } else if (notifyWeekly) {
-                        title = 'ZUnivers Daily Bonus'
+                        title = `${title_base} Bonus`
                         description = `command (/bonus)`
                     }
 
@@ -126,15 +140,15 @@ module.exports = class ZUnivers {
                             {
                                 title,
                                 description,
-                                url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
+                                url: channel_url,
                                 thumbnail: 'https://nekotiki.fr/zunivers.png',
                                 buttonText: 'Daily Channel',
                             },
                             [],
-                            'zunivers-daily-loots'
+                            tag
                         )
                     } else {
-                        await checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots')
+                        await checkAndDeleteMessage(this.channel(), tag)
                     }
 
                     logger('ZUnivers - Loot Streak - Checked!')
@@ -145,14 +159,12 @@ module.exports = class ZUnivers {
                         this.channel(),
                         '943447932160606228',
                         {
-                            title: 'ZUnivers Daily Loot',
+                            title: `${title_base} Loot`,
                             description: `Error with the Calculation, please check manually`,
-                            url: 'https://canary.discord.com/channels/138283154589876224/808432657838768168',
                             thumbnail: 'https://nekotiki.fr/zunivers.png',
-                            buttonText: 'Daily Channel',
                         },
                         [],
-                        'zunivers-daily-loots'
+                        tag
                     )
                 }
             })
