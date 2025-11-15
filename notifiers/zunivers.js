@@ -190,39 +190,72 @@ module.exports = class ZUnivers {
 
     fetchVortexStatus() {
         axios
-            .get('https://zunivers-api.zerator.com/public/tower/nekotiki', {
+            .get('https://zunivers-api.zerator.com/public/tower/season', {
                 headers: { 'x-zunivers-rulesettype': 'NORMAL' },
             })
-            .then(async ({ data }) => {
-                const {
-                    towerStats: {
-                        0: { towerName, maxFloorIndex, towerLogCount, towerSeasonBeginDate, towerSeasonEndDate },
-                    },
-                } = data
+            .then(({ data }) => {
+                const { index } = data
 
-                const maxTries = moment().diff(moment(towerSeasonBeginDate).subtract(12, 'hours'), 'days') * 2
+                axios
+                    .get('https://zunivers-api.zerator.com/public/tower/nekotiki', {
+                        headers: { 'x-zunivers-rulesettype': 'NORMAL' },
+                    })
+                    .then(async ({ data }) => {
+                        if (!data.towerStats.find((tower) => tower.towerSeasonIndex === index)) {
+                            await sendMessage(
+                                this.channel(),
+                                '943447932160606228',
+                                {
+                                    title: 'ZUnivers New Vortex',
+                                    description: `A new Vortex season has started! Please check your status.`,
+                                    url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
+                                    thumbnail: 'https://nekotiki.fr/zunivers.png',
+                                    buttonText: 'Vortex Channel',
+                                },
+                                [],
+                                'zuni-vortex-tries'
+                            )
 
-                if (maxFloorIndex !== 5 && towerLogCount < maxTries && moment().isBefore(towerSeasonEndDate)) {
-                    await sendMessage(
-                        this.channel(),
-                        '943447932160606228',
-                        {
-                            title: 'ZUnivers Vortex Tries',
-                            description: `${towerName} - floor ${maxFloorIndex + 1}/6
-                            \n\n
-                            ${maxTries - towerLogCount} tries left!`,
-                            url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
-                            thumbnail: 'https://nekotiki.fr/zunivers.png',
-                            buttonText: 'Vortex Channel',
-                        },
-                        [],
-                        'zuni-vortex-tries'
-                    )
-                } else {
-                    await checkAndDeleteMessage(this.channel(), 'zuni-vortex-tries')
-                }
+                            logger('ZUnivers - Vortex Status - Checked!')
+                            return
+                        }
 
-                logger('ZUnivers - Vortex Status - Checked!')
+                        const {
+                            towerStats: {
+                                0: {
+                                    towerName,
+                                    maxFloorIndex,
+                                    towerLogCount,
+                                    towerSeasonBeginDate,
+                                    towerSeasonEndDate,
+                                },
+                            },
+                        } = data
+
+                        const maxTries = moment().diff(moment(towerSeasonBeginDate).subtract(12, 'hours'), 'days') * 2
+
+                        if (maxFloorIndex !== 5 && towerLogCount < maxTries && moment().isBefore(towerSeasonEndDate)) {
+                            await sendMessage(
+                                this.channel(),
+                                '943447932160606228',
+                                {
+                                    title: 'ZUnivers Vortex Tries',
+                                    description: `${towerName} - floor ${maxFloorIndex + 1 || 0}/6\n\n${
+                                        maxTries - towerLogCount
+                                    } tries left!`,
+                                    url: 'https://canary.discord.com/channels/138283154589876224/824253593892290561',
+                                    thumbnail: 'https://nekotiki.fr/zunivers.png',
+                                    buttonText: 'Vortex Channel',
+                                },
+                                [],
+                                'zuni-vortex-tries'
+                            )
+                        } else {
+                            await checkAndDeleteMessage(this.channel(), 'zuni-vortex-tries')
+                        }
+
+                        logger('ZUnivers - Vortex Status - Checked!')
+                    })
             })
     }
 }
