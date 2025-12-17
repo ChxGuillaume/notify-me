@@ -63,12 +63,27 @@ module.exports = class ZUnivers {
             'zunivers-daily-loots'
         )
 
-        this.lootStreakCheck(
-            'HARDCORE',
-            'ZUnivers Daily (Hardcore)',
-            'https://canary.discord.com/channels/138283154589876224/1263861962744270958',
-            'zunivers-daily-loots-hardcore'
-        )
+        this.hardcoreEnabled().then((enabled) => {
+            if (!enabled) {
+                void checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots-hardcore')
+                return
+            }
+
+            this.lootStreakCheck(
+                'HARDCORE',
+                'ZUnivers Daily (Hardcore)',
+                'https://canary.discord.com/channels/138283154589876224/1263861962744270958',
+                'zunivers-daily-loots-hardcore'
+            )
+        })
+    }
+
+    hardcoreEnabled() {
+        return axios
+            .get('https://zunivers-api.zerator.com/public/event/current\n', {
+                headers: { 'x-zunivers-rulesettype': 'HARDCORE' },
+            })
+            .then(({ data }) => new Promise((resolve) => resolve(!!data.length)))
     }
 
     lootStreakCheck(rule_set_type, title_base, channel_url, tag) {
