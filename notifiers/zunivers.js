@@ -4,6 +4,9 @@ const cron = require('node-cron')
 const logger = require('../utils/logger')
 const { sendMessage, checkAndDeleteMessage } = require('../utils/messages')
 const { z } = require('zod')
+const fs = require('node:fs')
+
+const ENABLED_MODES_FILE_PATH = 'data/ZUnivers-enabled_modes.json'
 
 const FormData = z.record(
     z.string(),
@@ -20,8 +23,14 @@ const FormData = z.record(
 )
 
 module.exports = class ZUnivers {
+    enabledModes = ['normal', 'hardcore']
+
     constructor(client) {
         this.client = client
+
+        if (fs.existsSync(ENABLED_MODES_FILE_PATH)) {
+            this.enabledModes = JSON.parse(fs.readFileSync(ENABLED_MODES_FILE_PATH, 'utf8'))
+        }
 
         cron.schedule(
             '0,20,40 8-23 * * *',
@@ -42,6 +51,9 @@ module.exports = class ZUnivers {
                 switch (interaction.options.getSubcommand()) {
                     case 'daily':
                         await this.fetchLootsStreakInteraction(interaction)
+                        break
+                    case 'toggle':
+                        await this.toggleInteraction(interaction)
                         break
                 }
         })
@@ -64,7 +76,7 @@ module.exports = class ZUnivers {
         )
 
         this.hardcoreEnabled().then((enabled) => {
-            if (!enabled) {
+            if (!enabled || !this.enabledModes.includes('hardcore')) {
                 void checkAndDeleteMessage(this.channel(), 'zunivers-daily-loots-hardcore')
                 return
             }
@@ -201,6 +213,29 @@ module.exports = class ZUnivers {
             content: `Will check for you <t:${date.unix()}:R>`,
             ephemeral: true,
         })
+    }
+
+    async toggleInteraction(interaction) {
+        const mode = interaction.options.get('mode')?.value || 'normal'
+        let enabled = interaction.options.get('enabled')?.value
+
+        if (enabled === undefined) enabled = !this.enabledModes.includes(mode)
+
+        if (!['normal', 'hardcore'].includes(mode)) {
+            await interaction.reply({ content: `Checks for mode **${mode.toUpperCase()}** is not supported`, ephemeral: true })
+            return
+        }
+
+        if (enabled) this.enabledModes.push(mode)
+        else this.enabledModes = this.enabledModes.filter((m) => m !== mode)
+
+        this.saveEnabledModes(this.enabledModes)
+
+        interaction.reply({ content: `Checks for mode **${mode.toUpperCase()}** ${enabled ? 'Enabled' : 'Disabled'}`, ephemeral: true })
+    }
+
+    saveEnabledModes(modes) {
+        fs.writeFileSync(ENABLED_MODES_FILE_PATH, JSON.stringify(modes))
     }
 
     fetchVortexStatus() {

@@ -45,6 +45,29 @@ const commands = [
                     },
                 ],
             },
+            {
+                type: 1,
+                name: 'toggle',
+                description: 'Toggle daily notification',
+                options: [
+                    {
+                        type: 5,
+                        name: 'enabled',
+                        description: 'Enable daily notification',
+                        required: false,
+                    },
+                    {
+                        type: 3,
+                        name: 'mode',
+                        description: 'Game Mode (normal or hardcore)',
+                        required: false,
+                        choices: [
+                            { name: 'Normal', value: 'normal' },
+                            { name: 'Hardcore', value: 'hardcore' },
+                        ],
+                    },
+                ],
+            },
         ],
     },
     {
